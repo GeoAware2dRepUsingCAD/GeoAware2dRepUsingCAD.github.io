@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning Geometric-aware Properties in 2D Representation Using Lightweight CAD Models, or Zero Real 3D Pairs</title>
+  <link rel="stylesheet" href="css/bulma.min.css">
+  <link rel="stylesheet" href="css/splide.min.css">
+  <link rel="icon" href="assets/images/icon_32x32.png" type="image/png" sizes="32x32">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <meta property="og:type"               content="article" />
+  <meta property="og:title"              content="Diffusion Autoencoders" />
+  <style>
+    .black-frame {
+      height: 100%;
+      background: #171617;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .splide__pagination__page.is-active {
+      background: #555555;
+    }
+
+    .card {
+      margin: 10px;
+    }
+
+    .card .media-content .title,
+    .card .media-content .subtitle {
+      color: #4a4a4a;
+    }
+
+    .subtitle {
+      margin-top: -0.8rem !important;
+    }
+
+    .card-footer {
+      text-align: center;
+    }
+
+    .author {
+      font-size: 1.15rem
+    }
+
+    .author-vistec {
+      font-size: 1.3rem;
+    }
+
+    .conference-name{
+      font-size:  1.5rem;
+      padding: 12px;
+    }
+    .slider-container{
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+    @media only screen and (min-width: 900px) {
+      .container.col-max-width {
+        max-width: 900px !important;
+      }      
+    }
+
+    @media only screen and (min-width: 681px) {
+      .vistec-offset {
+        top: -15px;
+      }
+    }
+
+    @media only screen and (max-width: 600px) {
+      .slider-container{
+        padding-left: 0px;
+        padding-right: 0px;
+      }
+      .author {
+        font-size: 0.7rem
+      }
+
+      .author-vistec {
+        font-size: 0.8rem;
+      }
+
+      .conference-name{
+        font-size:  1rem;
+      }
+      .slider-container .card-footer-item{
+        font-size: 14px;
+      }
+    }
+
+    .shead {
+      font-size: 1.7rem;
+      margin-bottom: 0.5em !important;
+    }
+
+    .sec-body {}
+
+    .hero-body {
+      padding: 1rem 1rem 2rem 1rem;
+    }
+
+    .bbut {
+      background-color: #739cde;
+      color: white;
+      padding: 0.5em 0.8em;
+      border-radius: 5px;
+    }
+
+    .dtitle {
+      font-size: 1.1rem;
+    }
+
+    .bbut:hover {
+      color: white !important;
+    }
+
+    .videoren .column {
+      margin: 0px;
+    }
+    .button-clipboard-tooltip{
+        display: none;
+        color:white;
+        background: rgba(74,74,74,0.9);
+        border-radius: 2px;
+        padding: 0.5rem 1rem;
+        margin-right: 1rem;
+        text-overflow: ellipsis;
+        white-space: pre;
+    }
+    h1 {
+      font-size: 27px !important;
+    }
+    h2 {
+      font-size: 20px !important;
+      color: #4d1e79 !important;
+      margin-top: 10px;
+    }
+    .author {
+      padding: 0px 10px;
+    }
+    a {
+      text-decoration: none;
+    }
+    .mark {
+      border: 2px #C00000 solid;
+      top: 2px;
+      position: relative;
+    }
+
+    .tablehead {
+      display: inline-block; 
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .imgresult {
+    }
+    .anim {
+      margin-left :10px;
+    }
+    .attable {
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+.button-7 {
+  background-color: #0095ff;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.15385;
+  margin: 0;
+  outline: none;
+  padding: 8px .8em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.button-7:hover,
+.button-7:focus {
+  background-color: #07c;
+}
+
+.button-7:focus {
+  box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
+}
+
+.button-7:active {
+  background-color: #0064bd;
+  box-shadow: none;
+}
+.hide {
+  display: none;
+}
+      #interpolation img, video {
+        width: 175px;
+        height: 175px;
+      }
+      #uncond img {
+        display: block;
+          float: left;
+      }
+      .clear {
+        clear: both;
+      }
+
+  </style>
+
+  <script src="assets/scripts/splide.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+    //const path = "./data/manipulation_Tinv500_Tgen100/";
+    const path = "./data/website_results/";
+    const IMG_SIZE = 175;
+
+    let animid = 0;
+    let animdir = 1;
+    //let animN = 31;
+    let animN = 15;
+
+    const smiling = {
+      name: "Smiling",
+      prefix: "Smiling",
+      mark: "original",
+      list: [
+        "ffhq-18072",
+        "ffhq-37879",
+        "ffhq-2124",
+        "ffhq-4001",
+        "ffhq-63565",
+        "ffhq-10370",
+        "ffhq-64506",
+        //"ffhq-28816",
+        "ffhq-52448",
+        "ffhq-55032",
+        //"ffhq-58498",
+        "ffhq-4442",
+      ]
+    };
+
+    const wavy = {
+      name: "Wavy Hair",
+      prefix: "Wavy_Hair",
+      mark: "original",
+      list: [
+        "ffhq-4253",
+        "ffhq-4730",
+        "ffhq-4098",
+        "ffhq-67667",
+        "ffhq-4177",
+        "ffhq-4020",
+        "ffhq-4009",
+        "ffhq-4031",
+        "ffhq-4196",
+        "ffhq-4225",
+      ]
+    };
+
+    const male = {
+      name: "Male",
+      prefix: "Male",
+      mark: "original",
+      list: [
+        "ffhq-3804",
+        "ffhq-4145",
+        "ffhq-65739",
+        //"ffhq-4073",
+        "ffhq-4089",
+        "ffhq-3813",
+        "ffhq-3821",
+        "ffhq-4028",
+        "ffhq-4109",
+        "ffhq-4009",
+        "ffhq-4076",
+      ]
+    };
+
+    const young = {
+      name: "Age",
+      prefix: "Young",
+      mark: "original",
+      list: [
+        "ffhq-4077",
+        "ffhq-41207",
+        "ffhq-4007",
+        "ffhq-28299",
+        "ffhq-33479",
+        "ffhq-41172",
+        "ffhq-5449",
+        "ffhq-4011",
+        //"celeb-14580",
+        "ffhq-4022",
+        "ffhq-4042",
+        //"ffhq-4089",
+      ]
+    };
+
+
+
+    function genTable(attr) {
+      let out = "";
+      const width = IMG_SIZE;
+      const text = [`- ${attr["name"]}`, `<img src='images/arrow.png' style='height: 15px !important;'>`, `<span style='color: #C00000'>Real Input</span>`, `<img src='images/arrow.png' style='height: 15px !important; -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);'>`, `+ ${attr["name"]}`, `&nbsp;&nbsp;&nbsp;Animated`];
+
+      for (let i = 0; i < text.length; i++) {
+        out += `<span class='tablehead' style='width: ${width}px;'>${text[i]}</span>`;
+      }
+      let count = 0;
+      for (let item of attr["list"]) {
+        if (++count > 2) {
+          out += "<div class='hide'>";
+        } else {
+          out += "<div>";
+        }
+        for (let j = 0; j < 5; j++) {
+          let pos = Math.round((j / 4) * (animN - 1));
+
+          let w = width;
+          let mark = "";
+          if (j == 2) {
+            w += 4;
+            mark = "mark";
+            pos = -1;
+          }
+          console.log(pos);
+          out += `<img src='${path}${attr["prefix"]}-${item}.jpg' style='object-fit: cover; object-position: ${-(pos+1)*width}px 0; width: ${w}px; height: ${w}px;' class='${mark} imgresult'>`;
+        }
+        out += `<img src='${path}${attr["prefix"]}-${item}.jpg' style='object-fit: cover; width: ${width}px; height: ${width}px; display: inline-block; object-position: 0 0;' class='anim'></div>`;
+        out += `</div>`;
+      }
+
+      /*
+      $('<img src="">').attr("src", `${path}${attr["list"][0]}/strip.jpg`).on('load', function(){
+        animN = this.width / this.height - 1;
+        console.log("animN", animN);
+      })*/
+      return out;
+    }
+
+
+    function animation() {
+      $(".anim").each(function() {
+        //let src = $(this).attr("src");
+        //const sp = src.split("/");
+        //let newsrc = sp.slice(0, -1).join("/") + "/" + String(animid).padStart(5, '0') + ".png";
+        //$(this).attr("src", newsrc);
+        $(this).css("object-position", (-175 * (animid+1)) + "px 0");
+      });
+      animid += animdir;
+      if (animid < 0) {
+        animdir *= -1;
+        animid = 0;
+      }
+      if (animid >= animN) {
+        animdir *= -1;
+        animid = animN-1;
+      }
+    }
+
+    function gen_unconditional(dataset = 'bedroom128'){
+        var dataset_cfg = {
+            "ffhq256": {
+               "path": "data/Unconditional_Samples/ffhq256_my/",
+               "size": 140,
+               "row_size":7,
+               "n_img": 28 
+            },
+            "bedroom128": {
+                "path": "data/Unconditional_Samples/bedroom128_my/",
+                "size": 70,
+                "row_size":14,
+                "n_img": 52
+
+            },
+            "horse128": {
+                "path":  "data/Unconditional_Samples/horse128_my/",
+                "size": 70,
+                "row_size":14,
+                "n_img": 52
+            }
+        };
+
+        
+        let path = dataset_cfg[dataset]["path"];
+        let img_size = dataset_cfg[dataset]["size"]
+        let row_size = dataset_cfg[dataset]["row_size"]
+        let n_img = dataset_cfg[dataset]["n_img"]
+
+        let out = "";
+        // let n_img =10;
+        let mark = "";
+        const w = img_size;
+        const h = img_size;
+        // out += "<div>" ;
+        
+        for (const x of Array(Math.round(n_img/row_size)).keys()){
+          /*
+            if (x > 2 && false) {
+                out += "<div class='hide'>";
+            } 
+            else {
+                out += "<div>";
+            }*/
+            for (const y of Array(row_size).keys()){
+                out +=  `<img src='${path}${x*row_size+y}.png' width='${w}' height='${h}' class='${mark} imgresult'>` ;
+            } 
+            //out += "</div>";
+        }
+        // out += '<div>';
+        return out;
+
+        
+    }
+
+    $(document).ready(function() {
+      $("#am_smiling").html(genTable(smiling));
+      $("#am_young").html(genTable(young));
+      $("#am_wavy").html(genTable(wavy));
+      $("#am_male").html(genTable(male));
+      $("#uncon_ffhq256").html(gen_unconditional("ffhq256"));
+      $("#uncon_horse128").html(gen_unconditional("horse128"));
+      $("#uncon_bedroom128").html(gen_unconditional("bedroom128"));
+
+      const imageUrl = '/path/to/your/image.jpg'
+
+      $(".moreresults").click(function() {
+        $(this).prev().children(".hide").slideDown();
+        $(this).hide();
+      });
+      setInterval(animation, 180);
+    });
+
+  </script>
+</head>
+
+<body style="background-color: white; overflow-x: hidden; font-family: 'Google Sans', sans-serif;">
+  <section class="hero" style="background-color: white;">
+    <div class="hero-body" style="padding: 3rem 0 2rem 0;">
+      <div class="container" style="text-align: center; max-width: 950px;">
+        <h1 class="title">
+            Learning Geometric-aware Properties in 2D Representation Using Lightweight CAD Models, or Zero Real 3D Pairs
+        </h1>
+        <div class="columns author is-mobile">
+          <div class="column">
+            <span class="author"><a href="https://pattaramaneea.github.io/" style="color: #4a4a4a">Pattaramanee Arsomngern</a></span>
+            <span class="author"><a href="https://scholar.google.com/citations?user=fEPAC_AAAAAJ&hl=en" style="color: #4a4a4a">Sarana Nutanong</a></span>
+            <span class="author"><a href="https://www.supasorn.com" style="color: #4a4a4a">Supasorn Suwajanakorn</a></span>
+          </div>
+        </div>
+        <!-- <div>
+        </div> -->
+        <div class="author-vistec">
+        <!-- <h2> -->
+          VISTEC - Vidyasirimedhi Institute of Science and Technology<br>Rayong, Thailand
+        <!-- </h2> -->
+        </div>
+        <div>
+            <h1 class="title conference-name" > CVPR 2023 </h1>
+          </div>
+      </div>
+    </div>
+  </section>
+  <section class="section" style="display : flex; align-items : center;justify-content: center;padding: 10px;">
+    <div style="max-width:  900px;width: 900px;">
+      <div style="position: relative;width: 100%;height: 0;padding-bottom: 56.25%;">
+        <iframe height="506.25" width="900"
+          style=" position: absolute;top: 0;left: 0;width: 100%;height: 100%;max-height: 100%; max-width: 100%;"
+          src="https://www.youtube.com/embed/nTb1RC9T-0I" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container" style="max-width:900px;">
+        <h1 class="title shead">Abstract</h1>
+        <p class="abstract" style="text-align: justify;">
+            Cross-modal training using a 2D-3D paired dataset, e.g., multi-view images/scene scans, presents an effective way to
+            enhance 2D scene understanding by introducing geometric and view-invariance priors into 2D features. However, the need for large-scale scene datasets limits their further im-
+            provements and scalability. This paper explores an alternative learning method by
+            leveraging a lightweight and publicly available type of 3D data, i.e., CAD models. We construct a 3D space with geometric-aware alignment where
+            the similarity in this space reflects the geometric similarity of CAD models based on the Chamfer distance. The
+            acquired geometric-aware properties are then induced into
+            2D features, which boost performance on downstream tasks
+            more effectively than existing RGB-CAD approaches. Our
+            technique is not limited to paired RGB-CAD datasets; we
+            propose an extension for learning such representations on
+            pseudo pairs generated by existing CAD-based reconstruction methods. By training solely on pseudo pairs, we show
+            substantial improvement over SOTA 2D pre-trained models
+            using either ResNet-50 or ViT-B backbone. We also achieve
+            comparable results to SOTA methods trained on scene scans
+            on four 2D understanding tasks in NYUv2, SUNRGB-D, indoor ADE20k, and indoor/outdoor COCO, despite using
+            real or pseudo-generated lightweight CAD models.
+      </div>
+    </div>
+  </section>
+  
+  <section class="hero">
+    <div class="hero-body">
+    <div class="container" style="text-align: center">
+      <img src="images/architecture.png" style="width: 900px">
+    </div>
+    <div class="container" style="text-align: center; max-width:900px;">
+      <span style="display: block; font-size: 12px; position: relative; top: -10px; line-height: 1.1em;">
+        <!-- <p>s -->
+        <b>Figure: Our pre-training strategy.</b> We learn 2D representations on a joint 2D-3D space from RGB-CAD pairs based on three loss
+        functions. LGEO focuses on learning CAD features from two similar CAD models mined from Chamfer distance, LIMG focuses on learning
+        visual differences between two image augmentations, and LCROSS shares geometric awareness from CAD features to 2D representation. </span>
+    </div>
+  </div>
+  </section>
+ 
+  <section class="hero">
+    <div class="sec-body">
+      <div class="container is-size-5" style="text-align: center;">
+
+        <div class="columns">
+          <div class="column "></div>
+          <div class="column ">
+            <a href="https://openaccess.thecvf.com/content/CVPR2023/papers/Arsomngern_Learning_Geometric-Aware_Properties_in_2D_Representation_Using_Lightweight_CAD_Models_CVPR_2023_paper.pdf" target="_blank">
+              <div>
+                <img src="images/paper_logo.png" width="100px"> 
+                <!-- style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"> -->
+              </div>
+              Paper
+            </a>
+          </div>
+          <div class="column ">
+            <a href="#" target="_blank">
+              <div>
+                <img src="images/github_logo.png" width="100px" >
+                <!-- style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"> -->
+              </div>
+              Code (coming soon!)
+            </a>
+          </div>
+          <div class="column "></div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>  
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container" style="width:900px; text-align: left; margin-top: 50px;">
+        <h1 class="title shead">Geometric-aware properties in 2D representations</h1>
+        <p class="abstract" style="text-align: justify;">
+          We leverage CAD models to train a joint 2D-3D space such that images of objects with similar shapes, based on the Chamfer distance, are attracted to each other, while images with different shapes are separated.
+          This results in a continuous geometric-aware space where the distance between two points reflects their geometric similarity, which could be utilized for downstream 2D object understanding tasks.
+        </p>
+        <img src="images/keyidea.png" style="width: 900px; margin-top:20px">
+        <!-- Test long paragraph -->
+        <!-- <div class="container" style="max-width:900px;"> -->
+
+      <!-- </div> -->
+        <!-- <h2 class="title shead">Smiling</h2> -->
+      </div>
+    </div>
+  </section>
+
+  <!-- <section class="hero">
+    <div class="hero-body">
+      <div class="container" style="width:1100px; text-align: center; margin-top: 50px;">
+        <h1 class="title shead">Quantitative results visualization</h1>
+        <img src="images/pipeline.png" style="width: 500px">
+        <!--<h2 class="title shead">Smiling</h2>-->
+      </div>
+    </div>
+  </section> 
+
+  <section class="hero">
+    <div class="hero-body">
+      <!-- <div class="container" style="text-align: left"> -->
+      <div class="container" style="width:900px; text-align: left;">
+        <h1 class="title shead">Qualitative semantic segmentation results</h1>
+        <p class="abstract" style="text-align: justify;">
+          The semantic segmentation results are fine-tuned and conducted on NYUv2 dataset.
+        </p>
+        <!-- <div class="container" style="text-align: center"> -->
+        <img src="images/qualitative_results.png" style="width: 1000px; margin-top:20px;">
+      <!-- </div> -->
+        <!--<h2 class="title shead">Smiling</h2>-->
+      </div>
+    </div>
+  </section>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container" style="max-width:900px;">
+        <h1 class="title shead">Another project from our lab</h1>
+        <p class="abstract" style="text-align: justify;">
+        <a href="https://stylegan-salon.github.io/">StyleGAN Salon (CVPR 2023)</a>
+      </div>
+    </div>
+  </section>
+  
+
+  <section class="hero" style="background-color: white;">
+    <div style="margin: 0px; margin-top: 5px;">
+      <div class="container" style="text-align: center; vertica">
+        <a href="https://vistec.ist/vision" target="_blank"><img src="images/vision.png"
+            style="width:130px; display: inline; margin: 0 100px;"></a>
+        <a href="https://vistec.ist/scads" target="_blank"><img src="images/nrl.png"
+              style="width:130px; display: inline; margin: 0 100px;"></a>
+        <a href="https://vistec.ist/" target="_blank"><img src="images/vistec_color.svg" class="vistec-offset"
+            style="width: 130px; display: inline; margin: 0 100px; position:relative; "></a>
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>
